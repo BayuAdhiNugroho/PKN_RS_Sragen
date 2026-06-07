@@ -6,7 +6,7 @@ export default function MainLayout() {
   return (
     <div style={{display: 'flex', minHeight: '100svh', flexDirection: 'column'}}>
       <Navbar />
-      <main style={{padding: '28px 20px', flex: '1 1 auto'}}>
+      <main style={{padding: '28px 20px', flex: '1 1 auto', maxWidth: '100%', boxSizing: 'border-box'}}>
         <Outlet />
       </main>
       <Footer />
