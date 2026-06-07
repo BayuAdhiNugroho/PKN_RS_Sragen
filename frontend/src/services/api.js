@@ -1,11 +1,18 @@
 import axios from 'axios'
 
-const base = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const base = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+export const IMAGE_URL = base.replace('/api', '/uploads/');
 
 const api = axios.create({
   baseURL: base,
   headers: { 'Content-Type': 'application/json' },
 })
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 export const getDoctors = async () => {
   const res = await api.get('/doctors')
@@ -28,7 +35,7 @@ export const getFacilities = async () => {
 }
 
 export const getSchedule = async () => {
-  const res = await api.get('/schedule')
+  const res = await api.get('/schedules')
   return res.data
 }
 

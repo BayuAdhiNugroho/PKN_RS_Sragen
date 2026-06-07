@@ -1,19 +1,25 @@
 import { useEffect, useState } from 'react'
-import { getNews } from '../services/api'
+import { getNews, IMAGE_URL } from '../services/api'
 
 export default function News(){
   const [news, setNews] = useState([])
   useEffect(()=>{ getNews().then(setNews).catch(()=>{}) }, [])
   return (
-    <div>
-      <h1>Berita</h1>
-      <div style={{display:'grid', gap:12}}>
+    <div className="p-8 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8">Berita Terkini</h1>
+      <div className="space-y-6">
         {news.length ? news.map(n=> (
-          <article key={n.id} style={{border:'1px solid var(--border)', padding:12, borderRadius:8}}>
-            <div style={{fontWeight:600}}>{n.title}</div>
-            <div style={{fontSize:13}}>{n.summary}</div>
+          <article key={n.id} className="border rounded-lg p-6 shadow hover:shadow-md transition flex flex-col md:flex-row gap-6">
+            {n.gambar && (
+              <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="w-full md:w-48 h-48 md:h-32 object-cover rounded" />
+            )}
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold mb-2">{n.judul}</h2>
+              <div className="text-sm text-gray-500 mb-4">{new Date(n.tanggal).toLocaleDateString()}</div>
+              <p className="text-gray-700">{n.isi}</p>
+            </div>
           </article>
-        )) : <div>Tidak ada berita.</div>}
+        )) : <div className="text-center text-gray-500">Tidak ada berita.</div>}
       </div>
     </div>
   )

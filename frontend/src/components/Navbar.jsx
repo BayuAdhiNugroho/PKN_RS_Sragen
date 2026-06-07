@@ -1,6 +1,14 @@
 import { NavLink } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import api from '../services/api'
 
 export default function Navbar() {
+  const [linktree, setLinktree] = useState('')
+
+  useEffect(() => {
+    api.get('/settings/linktree').then(res => setLinktree(res.data.linktree_url)).catch(() => {})
+  }, [])
+
   return (
     <header className="navbar">
       <div style={{display:'flex',alignItems:'center',gap:12}}>
@@ -15,7 +23,7 @@ export default function Navbar() {
         <NavLink to="/news">Berita</NavLink>
         <NavLink to="/promotions">Promo</NavLink>
         <NavLink to="/contact">Kontak</NavLink>
-        <a className="cta" href="/contact">Booking</a>
+        <a className="cta" href={linktree || "/contact"} target={linktree ? "_blank" : "_self"} rel="noreferrer">Booking</a>
       </nav>
     </header>
   )
