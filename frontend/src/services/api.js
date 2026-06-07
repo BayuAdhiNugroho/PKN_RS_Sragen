@@ -16,32 +16,32 @@ api.interceptors.request.use((config) => {
 
 export const getDoctors = async () => {
   const res = await api.get('/doctors')
-  return res.data
+  return Array.isArray(res.data) ? res.data : []
 }
 
 export const getNews = async () => {
   const res = await api.get('/news')
-  return res.data
+  return Array.isArray(res.data) ? res.data : []
 }
 
 export const getPromotions = async () => {
   const res = await api.get('/promotions')
-  return res.data
+  return Array.isArray(res.data) ? res.data : []
 }
 
 export const getFacilities = async () => {
   const res = await api.get('/facilities')
-  return res.data
+  return Array.isArray(res.data) ? res.data : []
 }
 
 export const getSchedule = async () => {
   const res = await api.get('/schedules')
-  return res.data
+  return Array.isArray(res.data) ? res.data : []
 }
 
 export const getAchievements = async () => {
   const res = await api.get('/achievements')
-  return res.data
+  return Array.isArray(res.data) ? res.data : []
 }
 
 export const sendContact = async (payload) => {
