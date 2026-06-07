@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import api from '../services/api'
+import logoImg from '../assets/hero.png'
 
 export default function Navbar() {
   const [linktree, setLinktree] = useState('')
@@ -12,7 +13,7 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div style={{display:'flex',alignItems:'center',gap:12}}>
-        <img src="/src/assets/hero.png" alt="logo" style={{width:56,height:56,borderRadius:8}} />
+        <img src={logoImg} alt="logo" style={{width:56,height:56,borderRadius:8}} />
         <div className="brand">RS Sragen</div>
       </div>
       <nav className="nav-links">

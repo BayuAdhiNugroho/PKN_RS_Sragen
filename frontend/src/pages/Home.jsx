@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api, { getDoctors, getNews, getPromotions, IMAGE_URL } from '../services/api'
+import heroImg from '../assets/hero.png'
 
 export default function Home() {
   const [doctors, setDoctors] = useState([])
@@ -26,7 +27,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-image">
-          <img src="/src/assets/hero.png" alt="hero" />
+          <img src={heroImg} alt="hero" />
         </div>
       </section>
 
