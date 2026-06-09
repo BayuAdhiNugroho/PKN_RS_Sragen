@@ -15,7 +15,7 @@ Proyek ini adalah sistem informasi untuk RSU PKU Sragen berbasis **Full-stack (M
 
 ### 1. Kloning Repositori
 ```bash
-git clone https://github.com/BayuAdhiNugroho/PKN_RS_Sragen.git
+git clone https://github.com/Romariopermanaputra/PKN_RS_Sragen.git
 cd PKN_RS_Sragen
 ```
 
