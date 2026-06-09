@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api, { getDoctors, getNews, getPromotions, IMAGE_URL } from '../services/api'
-import heroImg from '../assets/hero.png'
+import heroImg from '../assets/logo_rs.jpg'
 
 export default function Home() {
   const [doctors, setDoctors] = useState([])

@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import api from '../services/api'
-import logoImg from '../assets/hero.png'
+import logoImg from '../assets/logo_rs.jpg'
 import { IoMenu, IoClose } from 'react-icons/io5'
 
 export default function Navbar() {
@@ -13,7 +13,7 @@ export default function Navbar() {
   }, [])
 
   const closeMobileMenu = () => {
-    setMobileMenuOpen(false)
+    setMobileMenuOpen(false)  
   }
 
   return (
