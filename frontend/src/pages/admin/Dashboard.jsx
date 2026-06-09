@@ -81,12 +81,13 @@ const activities = [
   },
 ];
 
+// === PERUBAHAN DI SINI ===
 const quickActions = [
   { 
     icon: 'user-plus',     
     label: 'Tambah Dokter', 
     desc: 'Tambahkan dokter baru',
-    path: '/admin/doctors/new',
+    path: '/admin/doctors#tambah-dokter', // <-- DIUBAH dari '/admin/doctors/new'
     color: 'blue'
   },
   { 
@@ -111,6 +112,7 @@ const quickActions = [
     color: 'purple'
   },
 ];
+// =========================
 
 // Component: Stat Card
 const StatCard = ({ config, value, isLoading }) => {
