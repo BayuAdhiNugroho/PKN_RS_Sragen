@@ -151,7 +151,8 @@ body {
 .hero-image img{max-width:360px;border-radius:12px;width:100%;height:auto}
 
 @media (max-width: 900px){
-  .hero-section{flex-direction:column;text-align:center;padding:28px 20px};flex-wrap:wrap;gap:12px}
+  .hero-section{flex-direction:column;text-align:center;padding:28px 20px;flex-wrap:wrap;gap:12px}
+}
 .section-title h2{margin:0}
 .section-title a{font-size:0.9rem;color:var(--accent);text-decoration:none}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
@@ -178,7 +179,7 @@ body {
   .cards{grid-template-columns:1fr}
   .card{padding:12px}
   .section-title{flex-direction:column;align-items:flex-start}
-  .section-title a{align-self:flex-start
+  .section-title a{align-self:flex-start}
 }
 
 @media (max-width: 1024px) {
@@ -210,7 +211,9 @@ h2 {
 
 @media (max-width: 640px) {
   h2 {
-    font-size: 18
+    font-size: 18px;
+  }
+}
 @media (max-width: 900px){
   .hero-section{flex-direction:column;text-align:center}
   .hero-content{text-align:center}
