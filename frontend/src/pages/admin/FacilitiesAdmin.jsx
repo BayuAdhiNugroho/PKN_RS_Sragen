@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
-import { useLocation } from 'react-router-dom';      // Tambahkan useLocation
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../../services/api';
 
 export default function FacilitiesAdmin() {
@@ -7,24 +7,27 @@ export default function FacilitiesAdmin() {
   const [formData, setFormData] = useState({ id: null, nama: '', deskripsi: '', gambar: null });
   const [isEditing, setIsEditing] = useState(false);
 
-  // === TAMBAHKAN KODE DI BAWAH INI ===
+  // === AUTO SCROLL LOGIC ===
   const location = useLocation();
   const formRef = useRef(null);
 
   useEffect(() => {
     // Cek jika URL memiliki hash #tambah-fasilitas
     if (location.hash === '#tambah-fasilitas' && formRef.current) {
-      // Scroll halus ke form
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Beri efek highlight (border indigo) selama 2 detik
-      formRef.current.classList.add('ring-2', 'ring-indigo-500', 'transition-all');
+      // Tunggu sebentar agar halaman selesai render
       setTimeout(() => {
-        formRef.current.classList.remove('ring-2', 'ring-indigo-500');
-      }, 2000);
+        // Scroll halus ke form
+        formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Beri efek highlight (border indigo) selama 2 detik
+        formRef.current.classList.add('ring-2', 'ring-indigo-500', 'transition-all');
+        setTimeout(() => {
+          formRef.current.classList.remove('ring-2', 'ring-indigo-500');
+        }, 2000);
+      }, 100);
     }
   }, [location]);
-  // === SAMPAI SINI ===
+  // =========================
 
   const fetchData = async () => {
     try {
@@ -70,7 +73,7 @@ export default function FacilitiesAdmin() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Fasilitas</h1>
       
-      {/* TAMBAHKAN ref={formRef} DI SINI */}
+      {/* PASANG ref={formRef} DI SINI */}
       <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit' : 'Tambah'} Fasilitas</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
