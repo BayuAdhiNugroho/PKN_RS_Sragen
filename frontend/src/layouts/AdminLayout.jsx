@@ -1,9 +1,10 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { IoMenu, IoClose } from 'react-icons/io5';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -199,7 +200,9 @@ export default function AdminLayout() {
         overflowY: 'auto',
         maxHeight: '100vh'
       }} className="admin-main">
-        <Outlet />
+        <div key={location.pathname} className="page-transition">
+          <Outlet />
+        </div>
       </main>
 
       <style>{`

@@ -19,11 +19,25 @@ export default function Home() {
     <div>
       <section className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">RS Sragen — Layanan Kesehatan Terpercaya</h1>
+          <h1 className="hero-title">RSU PKU Muhammadiyah Sragen — Layanan Kesehatan Terpercaya</h1>
           <p className="hero-sub">Pelayanan medis komprehensif, fasilitas modern, dan tim dokter profesional untuk kesehatan Anda.</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href={linktree || '/contact'} target={linktree ? "_blank" : "_self"} rel="noreferrer">Buat Janji</a>
             <a className="btn btn-outline" href="/schedule">Lihat Jadwal</a>
+          </div>
+          <div className="hero-badges">
+            <div className="badge">
+              <strong>24/7 Siaga</strong>
+              <span>Unit gawat darurat selalu siap.</span>
+            </div>
+            <div className="badge">
+              <strong>70+ Dokter</strong>
+              <span>Spesialis berpengalaman dari berbagai bidang.</span>
+            </div>
+            <div className="badge">
+              <strong>Fasilitas Lengkap</strong>
+              <span>Ruang perawatan, lab, dan poliklinik modern.</span>
+            </div>
           </div>
         </div>
         <div className="hero-image">
@@ -31,7 +45,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-highlight">
         <div className="section-title">
           <h2>Pelayanan Unggulan</h2>
           <a href="/facilities">Lihat semua</a>
@@ -72,34 +86,32 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section two-column">
-        <div>
-          <div className="section-title"><h2>Berita Terbaru</h2><a href="/news">Lainnya</a></div>
-          <div className="cards">
-            {news.length ? news.slice(0,4).map(n => (
-              <article className="card flex gap-4" key={n.id}>
-                {n.gambar && <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="w-24 h-24 object-cover rounded" />}
-                <div>
-                  <h3>{n.judul}</h3>
-                  <p style={{fontSize:13}} className="line-clamp-2">{n.isi}</p>
-                </div>
-              </article>
-            )) : <div>Tidak ada berita.</div>}
-          </div>
-        </div>
-
-        <aside>
-          <div className="section-title"><h2>Promo</h2><a href="/promotions">Lihat semua</a></div>
-          <div className="cards">
-            {promos.length ? promos.slice(0,3).map(p => (
-              <div className="card" key={p.id}>
-                {p.gambar && <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} className="w-full h-32 object-cover rounded mb-2" />}
-                <h3>{p.judul}</h3>
-                <p style={{fontSize:13}} className="line-clamp-2">{p.deskripsi}</p>
+      <section className="section">
+        <div className="section-title"><h2>Berita Terbaru</h2><a href="/news">Lainnya</a></div>
+        <div className="cards">
+          {news.length ? news.slice(0,4).map(n => (
+            <article className="card flex gap-4" key={n.id}>
+              {n.gambar && <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="w-24 h-24 object-cover rounded" />}
+              <div>
+                <h3>{n.judul}</h3>
+                <p style={{fontSize:13}} className="line-clamp-2">{n.isi}</p>
               </div>
-            )) : <div>Tidak ada promosi.</div>}
-          </div>
-        </aside>
+            </article>
+          )) : <div>Tidak ada berita.</div>}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="section-title"><h2>Promo</h2><a href="/promotions">Lihat semua</a></div>
+        <div className="cards">
+          {promos.length ? promos.slice(0,3).map(p => (
+            <div className="card" key={p.id}>
+              {p.gambar && <img src={`${IMAGE_URL}${p.gambar}`} alt={p.judul} className="w-full h-32 object-cover rounded mb-2" />}
+              <h3>{p.judul}</h3>
+              <p style={{fontSize:13}} className="line-clamp-2">{p.deskripsi}</p>
+            </div>
+          )) : <div>Tidak ada promosi.</div>}
+        </div>
       </section>
     </div>
   )

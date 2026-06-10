@@ -20,7 +20,7 @@ export default function Navbar() {
     <header className="navbar">
       <div style={{display:'flex',alignItems:'center',gap:12,flex:1}}>
         <img src={logoImg} alt="logo" style={{width:56,height:56,borderRadius:8}} />
-        <div className="brand">RS Sragen</div>
+        <div className="brand">RSU PKU Muhammadiyah Sragen</div>
       </div>
       <button 
         className="mobile-menu-btn"
@@ -30,13 +30,13 @@ export default function Navbar() {
         {mobileMenuOpen ? <IoClose /> : <IoMenu />}
       </button>
       <nav className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
-        <NavLink to="/" end onClick={closeMobileMenu}>Home</NavLink>
-        <NavLink to="/doctors" onClick={closeMobileMenu}>Dokter</NavLink>
-        <NavLink to="/facilities" onClick={closeMobileMenu}>Fasilitas</NavLink>
-        <NavLink to="/schedule" onClick={closeMobileMenu}>Jadwal</NavLink>
-        <NavLink to="/news" onClick={closeMobileMenu}>Berita</NavLink>
-        <NavLink to="/promotions" onClick={closeMobileMenu}>Promo</NavLink>
-        <NavLink to="/contact" onClick={closeMobileMenu}>Kontak</NavLink>
+        <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Home</NavLink>
+        <NavLink to="/doctors" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Dokter</NavLink>
+        <NavLink to="/facilities" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Fasilitas</NavLink>
+        <NavLink to="/schedule" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Jadwal</NavLink>
+        <NavLink to="/news" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Berita</NavLink>
+        <NavLink to="/promotions" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Promo</NavLink>
+        <NavLink to="/contact" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'} onClick={closeMobileMenu}>Kontak</NavLink>
         <a className="cta" href={linktree || "/contact"} target={linktree ? "_blank" : "_self"} rel="noreferrer" onClick={closeMobileMenu}>Booking</a>
       </nav>
     </header>

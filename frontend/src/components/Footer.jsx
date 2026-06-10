@@ -22,7 +22,7 @@ export default function Footer() {
           }}
         >
           <div>
-            <strong>RS Sragen</strong>
+            <strong>RSU PKU Muhammadiyah Sragen</strong>
             <div style={{ fontSize: "13px", marginTop: "8px" }}>
               Jl. Contoh No.1, Sragen • (+62) 123-4567
             </div>
@@ -43,7 +43,7 @@ export default function Footer() {
             fontSize: "13px",
           }}
         >
-          © {new Date().getFullYear()} RS Sragen
+          © {new Date().getFullYear()} RSU PKU Muhammadiyah Sragen
         </div>
       </div>
     </footer>
