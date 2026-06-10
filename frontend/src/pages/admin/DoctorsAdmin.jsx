@@ -1,10 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
+import { useLocation } from 'react-router-dom';      // Tambahkan useLocation
 import api from '../../services/api';
 
 export default function DoctorsAdmin() {
   const [doctors, setDoctors] = useState([]);
   const [formData, setFormData] = useState({ id: null, nama: '', spesialis: '', deskripsi: '', foto: null });
   const [isEditing, setIsEditing] = useState(false);
+
+  // === TAMBAHKAN KODE DI BAWAH INI ===
+  const location = useLocation();
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    // Cek jika URL memiliki hash #tambah-dokter
+    if (location.hash === '#tambah-dokter' && formRef.current) {
+      // Tunggu sebentar agar halaman selesai render
+      setTimeout(() => {
+        // Scroll halus ke form
+        formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Beri efek highlight (border biru) selama 2 detik
+        formRef.current.classList.add('ring-2', 'ring-blue-500', 'transition-all');
+        setTimeout(() => {
+          formRef.current.classList.remove('ring-2', 'ring-blue-500');
+        }, 2000);
+      }, 100);
+    }
+  }, [location]);
+  // === SAMPAI SINI ===
 
   const fetchDoctors = async () => {
     try {
@@ -67,7 +90,8 @@ export default function DoctorsAdmin() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Dokter</h1>
       
-      <div className="bg-white p-6 rounded shadow-md mb-8">
+      {/* TAMBAHKAN ref={formRef} DI SINI */}
+      <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit Dokter' : 'Tambah Dokter'}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
