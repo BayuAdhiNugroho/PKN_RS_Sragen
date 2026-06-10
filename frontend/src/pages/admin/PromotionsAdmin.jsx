@@ -1,10 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
+import { useLocation } from 'react-router-dom';      // Tambahkan useLocation
 import api from '../../services/api';
 
 export default function PromotionsAdmin() {
   const [promotions, setPromotions] = useState([]);
   const [formData, setFormData] = useState({ id: null, judul: '', deskripsi: '', tanggal_mulai: '', tanggal_berakhir: '', gambar: null });
   const [isEditing, setIsEditing] = useState(false);
+
+  // === AUTO SCROLL LOGIC ===
+  const location = useLocation();
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    // Cek jika URL memiliki hash #tambah-promosi
+    if (location.hash === '#tambah-promosi' && formRef.current) {
+      // Tunggu sebentar agar halaman selesai render
+      setTimeout(() => {
+        // Scroll halus ke form
+        formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Beri efek highlight (border UNGU) selama 2 detik
+        formRef.current.classList.add('ring-2', 'ring-purple-500', 'transition-all');
+        setTimeout(() => {
+          formRef.current.classList.remove('ring-2', 'ring-purple-500');
+        }, 2000);
+      }, 100);
+    }
+  }, [location]);
+  // =========================
 
   const fetchData = async () => {
     try {
@@ -58,7 +81,9 @@ export default function PromotionsAdmin() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Promo</h1>
-      <div className="bg-white p-6 rounded shadow-md mb-8">
+      
+      {/* TAMBAHKAN ref={formRef} DI SINI */}
+      <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit' : 'Tambah'} Promo</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div><label className="block text-sm">Judul Promo</label><input type="text" className="w-full border p-2" value={formData.judul} onChange={e => setFormData({...formData, judul: e.target.value})} required /></div>
@@ -69,25 +94,36 @@ export default function PromotionsAdmin() {
           <div><label className="block text-sm">Deskripsi</label><textarea className="w-full border p-2" value={formData.deskripsi} onChange={e => setFormData({...formData, deskripsi: e.target.value})} /></div>
           <div><label className="block text-sm">Gambar</label><input type="file" accept="image/*" onChange={e => setFormData({...formData, gambar: e.target.files[0]})} /></div>
           <div className="flex gap-2">
-            <button className="bg-blue-600 text-white px-4 py-2">Simpan</button>
-            {isEditing && <button type="button" onClick={() => { setIsEditing(false); setFormData({ id: null, judul: '', deskripsi: '', tanggal_mulai: '', tanggal_berakhir: '', gambar: null }); }} className="bg-gray-400 text-white px-4 py-2">Batal</button>}
+            <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Simpan</button>
+            {isEditing && <button type="button" onClick={() => { setIsEditing(false); setFormData({ id: null, judul: '', deskripsi: '', tanggal_mulai: '', tanggal_berakhir: '', gambar: null }); }} className="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>}
           </div>
         </form>
       </div>
+      
       <table className="min-w-full bg-white shadow-md rounded">
-        <thead className="bg-gray-50"><tr><th className="px-6 py-3 text-left">Judul</th><th className="px-6 py-3 text-left">Mulai</th><th className="px-6 py-3 text-left">Berakhir</th><th className="px-6 py-3 text-left">Aksi</th></tr></thead>
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left">Judul</th>
+            <th className="px-6 py-3 text-left">Mulai</th>
+            <th className="px-6 py-3 text-left">Berakhir</th>
+            <th className="px-6 py-3 text-left">Aksi</th>
+          </tr>
+        </thead>
         <tbody>
           {promotions.map(p => (
             <tr key={p.id} className="border-t">
               <td className="px-6 py-4">{p.judul}</td>
-              <td className="px-6 py-4">{new Date(p.tanggal_mulai).toLocaleDateString()}</td>
-              <td className="px-6 py-4">{new Date(p.tanggal_berakhir).toLocaleDateString()}</td>
+              <td className="px-6 py-4">{new Date(p.tanggal_mulai).toLocaleDateString('id-ID')}</td>
+              <td className="px-6 py-4">{new Date(p.tanggal_berakhir).toLocaleDateString('id-ID')}</td>
               <td className="px-6 py-4">
-                <button onClick={() => handleEdit(p)} className="text-indigo-600 mr-4">Edit</button>
-                <button onClick={() => handleDelete(p.id)} className="text-red-600">Hapus</button>
+                <button onClick={() => handleEdit(p)} className="text-purple-600 mr-4 hover:text-purple-800">Edit</button>
+                <button onClick={() => handleDelete(p.id)} className="text-red-600 hover:text-red-800">Hapus</button>
               </td>
             </tr>
           ))}
+          {promotions.length === 0 && (
+            <tr><td colSpan="4" className="px-6 py-4 text-center text-gray-500">Belum ada data promo</td></tr>
+          )}
         </tbody>
       </table>
     </div>
