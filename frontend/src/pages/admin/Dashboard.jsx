@@ -87,14 +87,14 @@ const quickActions = [
     icon: 'user-plus',     
     label: 'Tambah Dokter', 
     desc: 'Tambahkan dokter baru',
-    path: '/admin/doctors#tambah-dokter', // <-- DIUBAH dari '/admin/doctors/new'
+    path: '/admin/doctors#tambah-dokter',
     color: 'blue'
   },
   { 
     icon: 'file-plus',     
     label: 'Buat Berita',   
     desc: 'Publikasi artikel baru',
-    path: '/admin/news/new',
+    path: '/admin/news#tambah-berita', // <-- DIUBAH dari '/admin/news/new'
     color: 'teal'
   },
   { 
