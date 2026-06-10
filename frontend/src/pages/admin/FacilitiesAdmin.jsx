@@ -19,10 +19,10 @@ export default function FacilitiesAdmin() {
         // Scroll halus ke form
         formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Beri efek highlight (border indigo) selama 2 detik
-        formRef.current.classList.add('ring-2', 'ring-indigo-500', 'transition-all');
+        // Beri efek highlight (border BIRU) selama 2 detik
+        formRef.current.classList.add('ring-2', 'ring-blue-500', 'transition-all');
         setTimeout(() => {
-          formRef.current.classList.remove('ring-2', 'ring-indigo-500');
+          formRef.current.classList.remove('ring-2', 'ring-blue-500');
         }, 2000);
       }, 100);
     }
