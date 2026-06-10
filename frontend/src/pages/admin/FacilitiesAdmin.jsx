@@ -1,10 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
+import { useLocation } from 'react-router-dom';      // Tambahkan useLocation
 import api from '../../services/api';
 
 export default function FacilitiesAdmin() {
   const [facilities, setFacilities] = useState([]);
   const [formData, setFormData] = useState({ id: null, nama: '', deskripsi: '', gambar: null });
   const [isEditing, setIsEditing] = useState(false);
+
+  // === TAMBAHKAN KODE DI BAWAH INI ===
+  const location = useLocation();
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    // Cek jika URL memiliki hash #tambah-fasilitas
+    if (location.hash === '#tambah-fasilitas' && formRef.current) {
+      // Scroll halus ke form
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Beri efek highlight (border indigo) selama 2 detik
+      formRef.current.classList.add('ring-2', 'ring-indigo-500', 'transition-all');
+      setTimeout(() => {
+        formRef.current.classList.remove('ring-2', 'ring-indigo-500');
+      }, 2000);
+    }
+  }, [location]);
+  // === SAMPAI SINI ===
 
   const fetchData = async () => {
     try {
@@ -49,7 +69,9 @@ export default function FacilitiesAdmin() {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Fasilitas</h1>
-      <div className="bg-white p-6 rounded shadow-md mb-8">
+      
+      {/* TAMBAHKAN ref={formRef} DI SINI */}
+      <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit' : 'Tambah'} Fasilitas</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div><label className="block text-sm">Nama Fasilitas</label><input type="text" className="w-full border p-2" value={formData.nama} onChange={e => setFormData({...formData, nama: e.target.value})} required /></div>

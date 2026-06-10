@@ -101,7 +101,7 @@ const quickActions = [
     icon: 'building-plus', 
     label: 'Kelola Fasilitas',   
     desc: 'Atur unit layanan',
-    path: '/admin/facilities',
+    path: '/admin/facilities#tambah-fasilitas',
     color: 'indigo'
   },
   { 
