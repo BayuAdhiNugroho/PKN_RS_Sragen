@@ -94,7 +94,7 @@ const quickActions = [
     icon: 'file-plus',     
     label: 'Buat Berita',   
     desc: 'Publikasi artikel baru',
-    path: '/admin/news#tambah-berita', // <-- DIUBAH dari '/admin/news/new'
+    path: '/admin/news#tambah-berita',
     color: 'teal'
   },
   { 
@@ -102,13 +102,13 @@ const quickActions = [
     label: 'Kelola Fasilitas',   
     desc: 'Atur unit layanan',
     path: '/admin/facilities#tambah-fasilitas',
-    color: 'indigo'
+    color: 'blue' // Sesuai permintaan sebelumnya
   },
   { 
-    icon: 'chart-bar',     
-    label: 'Lihat Laporan',      
-    desc: 'Analisis & statistik',
-    path: '/admin/reports',
+    icon: 'discount',      // <-- DIUBAH (ikon diskon/promo)
+    label: 'Kelola Promosi',      // <-- DIUBAH
+    desc: 'Atur promo & diskon',  // <-- DIUBAH
+    path: '/admin/promotions#tambah-promosi', // <-- DIUBAH
     color: 'purple'
   },
 ];
