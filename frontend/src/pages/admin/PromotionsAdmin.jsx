@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
-import { useLocation } from 'react-router-dom';      // Tambahkan useLocation
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../../services/api';
 
 export default function PromotionsAdmin() {
@@ -14,12 +14,10 @@ export default function PromotionsAdmin() {
   useEffect(() => {
     // Cek jika URL memiliki hash #tambah-promosi
     if (location.hash === '#tambah-promosi' && formRef.current) {
-      // Tunggu sebentar agar halaman selesai render
       setTimeout(() => {
-        // Scroll halus ke form
         formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Beri efek highlight (border UNGU) selama 2 detik
+        // Efek highlight tetap UNGU (sesuai warna tombol di Dashboard)
         formRef.current.classList.add('ring-2', 'ring-purple-500', 'transition-all');
         setTimeout(() => {
           formRef.current.classList.remove('ring-2', 'ring-purple-500');
@@ -82,7 +80,6 @@ export default function PromotionsAdmin() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Promo</h1>
       
-      {/* TAMBAHKAN ref={formRef} DI SINI */}
       <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit' : 'Tambah'} Promo</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,7 +91,8 @@ export default function PromotionsAdmin() {
           <div><label className="block text-sm">Deskripsi</label><textarea className="w-full border p-2" value={formData.deskripsi} onChange={e => setFormData({...formData, deskripsi: e.target.value})} /></div>
           <div><label className="block text-sm">Gambar</label><input type="file" accept="image/*" onChange={e => setFormData({...formData, gambar: e.target.files[0]})} /></div>
           <div className="flex gap-2">
-            <button className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Simpan</button>
+            {/* TOMBOL SIMPAN DIUBAH MENJADI BIRU */}
+            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
             {isEditing && <button type="button" onClick={() => { setIsEditing(false); setFormData({ id: null, judul: '', deskripsi: '', tanggal_mulai: '', tanggal_berakhir: '', gambar: null }); }} className="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>}
           </div>
         </form>
