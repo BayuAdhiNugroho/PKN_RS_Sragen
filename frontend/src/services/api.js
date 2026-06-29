@@ -19,6 +19,16 @@ export const getDoctors = async () => {
   return Array.isArray(res.data) ? res.data : []
 }
 
+export const getDoctorById = async (id) => {
+  const res = await api.get(`/doctors/${id}`)
+  return res.data
+}
+
+export const getSpecialties = async () => {
+  const res = await api.get('/doctors/specialties')
+  return Array.isArray(res.data) ? res.data : []
+}
+
 export const getNews = async () => {
   const res = await api.get('/news')
   return Array.isArray(res.data) ? res.data : []

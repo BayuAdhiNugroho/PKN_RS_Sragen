@@ -9,6 +9,7 @@ exports.getAll = async (req, res) => {
     });
     res.json(doctors);
   } catch (error) {
+    console.error('Error fetching doctors:', error);
     res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data dokter' });
   }
 };
@@ -40,6 +41,35 @@ exports.update = async (req, res) => {
     res.json(doctor);
   } catch (error) {
     res.status(500).json({ message: 'Terjadi kesalahan saat mengupdate dokter' });
+  }
+};
+
+exports.getById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const doctor = await prisma.doctor.findUnique({
+      where: { id: Number(id) },
+      include: { schedules: true },
+    });
+    if (!doctor) {
+      return res.status(404).json({ message: 'Dokter tidak ditemukan' });
+    }
+    res.json(doctor);
+  } catch (error) {
+    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil detail dokter' });
+  }
+};
+
+exports.getSpecialties = async (req, res) => {
+  try {
+    const specialties = await prisma.doctor.findMany({
+      distinct: ['spesialis'],
+      select: { spesialis: true },
+      orderBy: { spesialis: 'asc' },
+    });
+    res.json(specialties.map(s => s.spesialis));
+  } catch (error) {
+    res.status(500).json({ message: 'Terjadi kesalahan saat mengambil data spesialisasi' });
   }
 };
 

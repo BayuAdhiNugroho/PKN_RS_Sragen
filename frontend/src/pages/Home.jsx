@@ -19,7 +19,7 @@ export default function Home() {
     <div>
       <section className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">RSU PKU Muhammadiyah Sragen — Layanan Kesehatan Terpercaya</h1>
+          <h1 className="hero-title">RSU PKU Muhammadiyah Sragen Layanan Kesehatan Terpercaya</h1>
           <p className="hero-sub">Pelayanan medis komprehensif, fasilitas modern, dan tim dokter profesional untuk kesehatan Anda.</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href={linktree || '/contact'} target={linktree ? "_blank" : "_self"} rel="noreferrer">Buat Janji</a>
@@ -47,7 +47,7 @@ export default function Home() {
 
       <section className="section section-highlight">
         <div className="section-title">
-          <h2>Pelayanan Unggulan</h2>
+          <h2 className="text-center w-full">Pelayanan Unggulan</h2>
           <a href="/facilities">Lihat semua</a>
         </div>
         <div className="cards">
@@ -72,7 +72,7 @@ export default function Home() {
 
       <section className="section">
         <div className="section-title">
-          <h2>Dokter Kami</h2>
+          <h2 className="text-center w-full">Dokter Kami</h2>
           <a href="/doctors">Lihat semua</a>
         </div>
         <div className="cards">
@@ -87,7 +87,7 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>Berita Terbaru</h2><a href="/news">Lainnya</a></div>
+        <div className="section-title"><h2 className="text-center w-full">Berita Terbaru</h2><a href="/news">Lainnya</a></div>
         <div className="cards">
           {news.length ? news.slice(0,4).map(n => (
             <article className="card flex gap-4" key={n.id}>
@@ -102,7 +102,7 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <div className="section-title"><h2>Promo</h2><a href="/promotions">Lihat semua</a></div>
+        <div className="section-title"><h2 className="text-center w-full">Promo</h2><a href="/promotions">Lihat semua</a></div>
         <div className="cards">
           {promos.length ? promos.slice(0,3).map(p => (
             <div className="card" key={p.id}>

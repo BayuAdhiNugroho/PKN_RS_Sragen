@@ -18,6 +18,8 @@ router.get('/', (req, res) => {
   res.json({ message: 'Public API' });
 });
 
+router.get('/doctors/specialties', doctorController.getSpecialties);
+router.get('/doctors/:id', doctorController.getById);
 router.get('/doctors', doctorController.getAll);
 router.get('/schedules', scheduleController.getAll);
 router.get('/news', newsController.getAll);
