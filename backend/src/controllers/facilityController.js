@@ -32,53 +32,98 @@ exports.getAll = async (req, res) => {
     const facilities = await prisma.tipe_kamar.findMany({
       orderBy: { id_kamar: 'desc' },
     });
+    
+    console.log('📊 Fetched facilities:', facilities.length);
+    if (facilities.length > 0) {
+      console.log('📸 Contoh gambar_url:', facilities[0].gambar_url);
+    }
+    
     res.json(facilities.map(normalizeFacility));
   } catch (error) {
-    console.error('Error fetching facilities:', error);
+    console.error('❌ Error fetching facilities:', error);
     res.status(500).json({ message: 'Terjadi kesalahan saat mengambil fasilitas' });
   }
 };
 
+// ✅ CREATE: Terima upload gambar fasilitas dengan logging lengkap
 exports.create = async (req, res) => {
   try {
+    console.log('\n=== CREATE FACILITY START ===');
+    console.log('📁 req.file:', req.file ? { filename: req.file.filename, originalname: req.file.originalname } : null);
+    console.log('📦 req.body:', req.body);
+    
     const { nama, nama_kamar, deskripsi, fasilitas, harga_mulai, jumlah_tersedia, status_aktif } = req.body;
+    
+    // ✅ Ambil filename dari upload jika ada
     const gambar = req.file ? req.file.filename : null;
+    
+    console.log('🖼️ Gambar yang akan disimpan:', gambar);
 
     const facility = await prisma.tipe_kamar.create({
       data: {
         nama_kamar: nama || nama_kamar,
         fasilitas: deskripsi ?? fasilitas,
-        gambar_url: gambar,
+        gambar_url: gambar, // ✅ Akan tersimpan jika ada file
         harga_mulai: parseNumberOrNull(harga_mulai),
         jumlah_tersedia: parseNumberOrNull(jumlah_tersedia) ?? 0,
         status_aktif: parseBoolean(status_aktif, true),
       },
     });
+    
+    console.log('✅ Facility berhasil dibuat:', {
+      id: facility.id_kamar,
+      nama: facility.nama_kamar,
+      gambar_url: facility.gambar_url
+    });
+    console.log('=== CREATE FACILITY END ===\n');
+    
     res.status(201).json(normalizeFacility(facility));
   } catch (error) {
-    console.error('Error creating facility:', error);
+    console.error('❌ Error creating facility:', error);
     res.status(500).json({ message: 'Terjadi kesalahan saat menambah fasilitas' });
   }
 };
 
+// ✅ UPDATE: Terima upload gambar fasilitas dengan logging lengkap
 exports.update = async (req, res) => {
   try {
+    console.log('\n=== UPDATE FACILITY START ===');
+    console.log('📁 req.file:', req.file ? { filename: req.file.filename } : null);
+    console.log('📦 req.body:', req.body);
+    
     const { id } = req.params;
     const { nama, nama_kamar, deskripsi, fasilitas, harga_mulai, jumlah_tersedia, status_aktif } = req.body;
+    
+    // ✅ Ambil filename dari upload jika ada
     const gambar = req.file ? req.file.filename : undefined;
+    
+    console.log('🖼️ Gambar yang akan diupdate:', gambar);
 
     const data = {};
     if (nama || nama_kamar) data.nama_kamar = nama || nama_kamar;
     if (deskripsi !== undefined || fasilitas !== undefined) data.fasilitas = deskripsi ?? fasilitas;
-    if (gambar) data.gambar_url = gambar;
+    if (gambar) data.gambar_url = gambar; // ✅ Akan update jika ada file baru
     if (harga_mulai !== undefined) data.harga_mulai = parseNumberOrNull(harga_mulai);
     if (jumlah_tersedia !== undefined) data.jumlah_tersedia = parseNumberOrNull(jumlah_tersedia) ?? 0;
     if (status_aktif !== undefined) data.status_aktif = parseBoolean(status_aktif, true);
 
-    const facility = await prisma.tipe_kamar.update({ where: { id_kamar: Number(id) }, data });
+    console.log('📝 Data yang akan diupdate:', data);
+
+    const facility = await prisma.tipe_kamar.update({ 
+      where: { id_kamar: Number(id) }, 
+      data 
+    });
+    
+    console.log('✅ Facility berhasil diupdate:', {
+      id: facility.id_kamar,
+      nama: facility.nama_kamar,
+      gambar_url: facility.gambar_url
+    });
+    console.log('=== UPDATE FACILITY END ===\n');
+    
     res.json(normalizeFacility(facility));
   } catch (error) {
-    console.error('Error updating facility:', error);
+    console.error('❌ Error updating facility:', error);
     res.status(500).json({ message: 'Terjadi kesalahan saat mengupdate fasilitas' });
   }
 };
@@ -89,7 +134,7 @@ exports.remove = async (req, res) => {
     await prisma.tipe_kamar.delete({ where: { id_kamar: Number(id) } });
     res.json({ message: 'Fasilitas berhasil dihapus' });
   } catch (error) {
-    console.error('Error deleting facility:', error);
+    console.error('❌ Error deleting facility:', error);
     res.status(500).json({ message: 'Terjadi kesalahan saat menghapus fasilitas' });
   }
 };

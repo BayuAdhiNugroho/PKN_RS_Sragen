@@ -2,11 +2,21 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs'); // ✅ TAMBAHKAN INI
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// ✅ DEBUG: Cek folder uploads saat startup
+const uploadsPath = path.join(__dirname, 'uploads');
+console.log('📁 Uploads path:', uploadsPath);
+console.log('📁 Folder exists:', fs.existsSync(uploadsPath));
+if (fs.existsSync(uploadsPath)) {
+  const files = fs.readdirSync(uploadsPath);
+  console.log('📁 Files in uploads:', files);
+}
 
 app.use(cors({
   origin: [
@@ -19,8 +29,11 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve static uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// ✅ DEBUG: Log setiap request ke /uploads
+app.use('/uploads', (req, res, next) => {
+  console.log('🖼️ Request to uploads:', req.path);
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api', require('./src/routes/public'));

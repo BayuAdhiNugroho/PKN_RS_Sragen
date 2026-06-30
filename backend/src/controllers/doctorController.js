@@ -94,9 +94,12 @@ exports.getAll = async (req, res) => {
   }
 };
 
+// ✅ UPDATE: Terima upload foto - simpan ke database
 exports.create = async (req, res) => {
   try {
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
+    
+    // ✅ Terima file gambar jika ada
     const foto = req.file ? req.file.filename : null;
 
     const specialtyId = await findOrCreateSpecialty(spesialis);
@@ -106,7 +109,7 @@ exports.create = async (req, res) => {
       data: {
         nama_lengkap: nama || nama_lengkap,
         deskripsi,
-        foto_url: foto,
+        foto_url: foto, // Akan tersimpan jika ada file
         id_spesialis: specialtyId,
         id_subspesialis: subspecialtyId,
         status_aktif: parseBoolean(status_aktif, true),
@@ -124,10 +127,13 @@ exports.create = async (req, res) => {
   }
 };
 
+// ✅ UPDATE: Terima upload foto pada update
 exports.update = async (req, res) => {
   try {
     const { id } = req.params;
     const { nama, nama_lengkap, spesialis, subspesialis, deskripsi, status_aktif } = req.body;
+    
+    // ✅ Terima file gambar jika ada
     const foto = req.file ? req.file.filename : undefined;
 
     const specialtyId = spesialis !== undefined ? await findOrCreateSpecialty(spesialis) : undefined;
@@ -136,7 +142,7 @@ exports.update = async (req, res) => {
     const data = {};
     if (nama || nama_lengkap) data.nama_lengkap = nama || nama_lengkap;
     if (deskripsi !== undefined) data.deskripsi = deskripsi;
-    if (foto) data.foto_url = foto;
+    if (foto) data.foto_url = foto; // Akan update jika ada file baru
     if (specialtyId !== undefined) data.id_spesialis = specialtyId;
     if (subspecialtyId !== undefined) data.id_subspesialis = subspecialtyId;
     if (status_aktif !== undefined) data.status_aktif = parseBoolean(status_aktif, true);

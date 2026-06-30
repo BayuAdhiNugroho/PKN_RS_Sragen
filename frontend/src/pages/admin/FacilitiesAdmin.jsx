@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../../services/api';
 
+const BACKEND_URL = 'http://localhost:5000';
+
 const emptyForm = {
   id: null,
   nama: '',
@@ -19,19 +21,13 @@ export default function FacilitiesAdmin() {
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // === AUTO SCROLL LOGIC ===
   const location = useLocation();
   const formRef = useRef(null);
 
   useEffect(() => {
-    // Cek jika URL memiliki hash #tambah-fasilitas
     if (location.hash === '#tambah-fasilitas' && formRef.current) {
-      // Tunggu sebentar agar halaman selesai render
       setTimeout(() => {
-        // Scroll halus ke form
         formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Beri efek highlight (border BIRU) selama 2 detik
         formRef.current.classList.add('ring-2', 'ring-blue-500', 'transition-all');
         setTimeout(() => {
           formRef.current.classList.remove('ring-2', 'ring-blue-500');
@@ -39,13 +35,18 @@ export default function FacilitiesAdmin() {
       }, 100);
     }
   }, [location]);
-  // =========================
 
   const fetchData = async () => {
     try {
       const res = await api.get('/admin/facilities');
+      console.log('📦 Data dari API:', res.data); // ✅ DEBUG: Lihat struktur data
+      if (res.data.length > 0) {
+        console.log('📸 Contoh gambar_url:', res.data[0].gambar_url);
+      }
       setFacilities(res.data);
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+      console.error('❌ Error fetch:', err);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -58,7 +59,10 @@ export default function FacilitiesAdmin() {
     data.append('harga_mulai', formData.harga_mulai);
     data.append('jumlah_tersedia', formData.jumlah_tersedia);
     data.append('status_aktif', formData.status_aktif ? 'true' : 'false');
-    if (formData.gambar) data.append('gambar', formData.gambar);
+    if (formData.gambar) {
+      data.append('gambar', formData.gambar);
+      console.log('📤 Upload gambar:', formData.gambar.name);
+    }
 
     try {
       if (isEditing) {
@@ -69,10 +73,15 @@ export default function FacilitiesAdmin() {
       setFormData(emptyForm);
       setIsEditing(false);
       fetchData();
-    } catch (err) { alert('Gagal menyimpan fasilitas'); }
+      alert('Fasilitas berhasil disimpan!');
+    } catch (err) { 
+      console.error('❌ Error save:', err);
+      alert('Gagal menyimpan fasilitas'); 
+    }
   };
 
   const handleEdit = (f) => {
+    console.log('✏️ Edit facility:', f); // ✅ DEBUG: Lihat data yang di-edit
     setFormData({
       id: f.id,
       nama: f.nama || '',
@@ -81,6 +90,7 @@ export default function FacilitiesAdmin() {
       jumlah_tersedia: f.jumlah_tersedia ?? 0,
       status_aktif: f.status_aktif ?? true,
       gambar: null,
+      gambar_url: f.gambar_url || f.gambar, // ✅ Ambil dari field manapun
     });
     setIsEditing(true);
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -91,6 +101,14 @@ export default function FacilitiesAdmin() {
       await api.delete(`/admin/facilities/${id}`);
       fetchData();
     }
+  };
+
+  // ✅ Fungsi helper untuk URL gambar
+  const getImageUrl = (filename) => {
+    if (!filename) return null;
+    const url = `${BACKEND_URL}/uploads/${filename}`;
+    console.log('🖼️ Image URL:', url); // ✅ DEBUG: Lihat URL yang dibuat
+    return url;
   };
 
   const filteredFacilities = facilities.filter((item) => {
@@ -110,7 +128,6 @@ export default function FacilitiesAdmin() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Kamar/Fasilitas</h1>
       
-      {/* PASANG ref={formRef} DI SINI */}
       <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit' : 'Tambah'} Kamar/Fasilitas</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -133,10 +150,29 @@ export default function FacilitiesAdmin() {
               </select>
             </div>
           </div>
-          <div><label className="block text-sm">Gambar</label><input type="file" accept="image/*" onChange={e => setFormData({...formData, gambar: e.target.files[0]})} /></div>
+          
+          <div>
+            <label className="block text-sm">Gambar</label>
+            <input type="file" accept="image/*" onChange={e => setFormData({...formData, gambar: e.target.files[0]})} />
+            {isEditing && (formData.gambar_url || formData.gambar) && (
+              <div className="mt-2">
+                <p className="text-xs text-gray-500">Gambar saat ini:</p>
+                <img 
+                  src={getImageUrl(formData.gambar_url || formData.gambar)}
+                  alt="Current" 
+                  className="w-24 h-24 object-cover rounded mt-1 border"
+                  onError={(e) => {
+                    console.error('❌ Gagal load gambar:', e.target.src);
+                    e.target.src = 'https://via.placeholder.com/96?text=Error';
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          
           <div className="flex gap-2">
-            <button className="bg-blue-600 text-white px-4 py-2">Simpan</button>
-            {isEditing && <button type="button" onClick={() => { setIsEditing(false); setFormData(emptyForm); }} className="bg-gray-400 text-white px-4 py-2">Batal</button>}
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
+            {isEditing && <button type="button" onClick={() => { setIsEditing(false); setFormData(emptyForm); }} className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500">Batal</button>}
           </div>
         </form>
       </div>
@@ -168,23 +204,58 @@ export default function FacilitiesAdmin() {
       </div>
 
       <table className="min-w-full bg-white shadow-md rounded">
-        <thead className="bg-gray-50"><tr><th className="px-6 py-3 text-left">Nama</th><th className="px-6 py-3 text-left">Harga</th><th className="px-6 py-3 text-left">Tersedia</th><th className="px-6 py-3 text-left">Status</th><th className="px-6 py-3 text-left">Aksi</th></tr></thead>
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gambar</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tersedia</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+          </tr>
+        </thead>
         <tbody>
-          {filteredFacilities.map(f => (
-            <tr key={f.id} className="border-t">
-              <td className="px-6 py-4">{f.nama}</td>
-              <td className="px-6 py-4">{f.harga_mulai ? Number(f.harga_mulai).toLocaleString('id-ID') : '-'}</td>
-              <td className="px-6 py-4">{f.jumlah_tersedia ?? 0}</td>
-              <td className="px-6 py-4">{f.status_aktif ? 'Aktif' : 'Nonaktif'}</td>
-              <td className="px-6 py-4">
-                <button onClick={() => handleEdit(f)} className="text-indigo-600 mr-4">Edit</button>
-                <button onClick={() => handleDelete(f.id)} className="text-red-600">Hapus</button>
-              </td>
-            </tr>
-          ))}
+          {filteredFacilities.map(f => {
+            const imageUrl = getImageUrl(f.gambar_url || f.gambar);
+            return (
+              <tr key={f.id} className="border-t hover:bg-gray-50">
+                <td className="px-6 py-4">
+                  {imageUrl ? (
+                    <img 
+                      src={imageUrl}
+                      alt={f.nama}
+                      className="w-16 h-16 object-cover rounded border"
+                      onError={(e) => {
+                        console.error('❌ Gagal load gambar di tabel:', e.target.src);
+                        e.target.src = 'https://via.placeholder.com/64?text=Error';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">
+                      No Image
+                    </div>
+                  )}
+                </td>
+                <td className="px-6 py-4 font-medium">{f.nama}</td>
+                <td className="px-6 py-4">{f.harga_mulai ? `Rp ${Number(f.harga_mulai).toLocaleString('id-ID')}` : '-'}</td>
+                <td className="px-6 py-4">{f.jumlah_tersedia ?? 0}</td>
+                <td className="px-6 py-4">
+                  <span className={`px-2 py-1 rounded text-xs ${f.status_aktif ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {f.status_aktif ? 'Aktif' : 'Nonaktif'}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <button onClick={() => handleEdit(f)} className="text-indigo-600 hover:text-indigo-800 mr-4 font-medium">Edit</button>
+                  <button onClick={() => handleDelete(f.id)} className="text-red-600 hover:text-red-800 font-medium">Hapus</button>
+                </td>
+              </tr>
+            );
+          })}
           {filteredFacilities.length === 0 && (
             <tr>
-              <td colSpan="5" className="px-6 py-4 text-center text-gray-500">Tidak ada data yang sesuai filter</td>
+              <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                Tidak ada data yang sesuai filter
+              </td>
             </tr>
           )}
         </tbody>

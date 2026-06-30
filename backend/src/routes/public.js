@@ -34,7 +34,11 @@ router.get('/settings/linktree', settingController.getLinktree);
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  const admin = await prisma.admin.findUnique({ where: { username } });
+  // PERBAIKAN: Gunakan raw query karena tabel 'admins' dibuat manual via create-admin.js
+  // dan tidak terdaftar di schema.prisma
+  const admins = await prisma.$queryRaw`SELECT * FROM admins WHERE username = ${username}`;
+  const admin = admins[0];
+
   if (!admin) return res.status(401).json({ message: 'Username atau password salah' });
 
   const match = await bcrypt.compare(password, admin.password);
