@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
-import api, { getDoctors, getNews, getPromotions, IMAGE_URL } from '../services/api'
+import api, { getNews, getPromotions, IMAGE_URL } from '../services/api'
 import heroImg from '../assets/logo_rs.jpg'
 
 export default function Home() {
-  const [doctors, setDoctors] = useState([])
   const [news, setNews] = useState([])
   const [promos, setPromos] = useState([])
   const [linktree, setLinktree] = useState('')
 
   useEffect(() => {
-    getDoctors().then(setDoctors).catch(() => {})
     getNews().then(setNews).catch(() => {})
     getPromotions().then(setPromos).catch(() => {})
     api.get('/settings/linktree').then(res => setLinktree(res.data.linktree_url)).catch(() => {})
@@ -72,17 +70,15 @@ export default function Home() {
 
       <section className="section">
         <div className="section-title">
-          <h2 className="text-center w-full">Dokter Kami</h2>
-          <a href="/doctors">Lihat semua</a>
+          <h2 className="text-center w-full">Temukan Dokter Sesuai Kebutuhan</h2>
         </div>
-        <div className="cards">
-          {doctors.length ? doctors.slice(0,4).map(d => (
-            <div className="card" key={d.id}>
-              {d.foto && <img src={`${IMAGE_URL}${d.foto}`} alt={d.nama} className="w-full h-40 object-cover rounded mb-2" />}
-              <h3>{d.nama}</h3>
-              <div style={{fontSize:13}}>{d.spesialis}</div>
-            </div>
-          )) : <div>Tidak ada data dokter.</div>}
+        <div className="doctor-cta">
+          <div>
+            <p className="doctor-cta-label">Direktori Dokter</p>
+            <h3>Informasi dokter, spesialisasi, dan jadwal praktik tersedia di satu halaman.</h3>
+            <p>Gunakan halaman dokter untuk mencari nama dokter, melihat spesialisasi, dan membuka detail jadwal praktik tanpa memenuhi halaman utama.</p>
+          </div>
+          <a className="btn btn-primary" href="/doctors">Lihat Daftar Dokter</a>
         </div>
       </section>
 

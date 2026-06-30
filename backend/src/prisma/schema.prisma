@@ -28,6 +28,27 @@ model Achievement {
   @@map("achievements")
 }
 
+model News {
+  id      Int      @id @default(autoincrement())
+  judul   String   @db.VarChar(255)
+  isi     String   @db.LongText
+  gambar  String?  @db.VarChar(255)
+  tanggal DateTime @default(now())
+
+  @@map("news")
+}
+
+model Promotion {
+  id                Int      @id @default(autoincrement())
+  judul             String   @db.VarChar(255)
+  deskripsi         String?  @db.Text
+  gambar            String?  @db.VarChar(255)
+  tanggal_mulai     DateTime
+  tanggal_berakhir  DateTime
+
+  @@map("promotions")
+}
+
 model dokter {
   id_dokter       Int              @id @default(autoincrement())
   nama_lengkap    String           @db.VarChar(150)
