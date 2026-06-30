@@ -16,6 +16,8 @@ export default function FacilitiesAdmin() {
   const [facilities, setFacilities] = useState([]);
   const [formData, setFormData] = useState(emptyForm);
   const [isEditing, setIsEditing] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   // === AUTO SCROLL LOGIC ===
   const location = useLocation();
@@ -91,6 +93,19 @@ export default function FacilitiesAdmin() {
     }
   };
 
+  const filteredFacilities = facilities.filter((item) => {
+    const keyword = searchText.trim().toLowerCase();
+    const matchesSearch = !keyword || [item.nama, item.deskripsi]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(keyword));
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'active' && item.status_aktif) ||
+      (statusFilter === 'inactive' && !item.status_aktif);
+
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Kamar/Fasilitas</h1>
@@ -125,10 +140,37 @@ export default function FacilitiesAdmin() {
           </div>
         </form>
       </div>
+
+      <div className="bg-white p-4 rounded shadow-md mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2">
+            <label className="block text-sm mb-1">Cari Kamar/Fasilitas</label>
+            <input
+              type="text"
+              className="w-full border p-2 rounded"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Ketik nama atau deskripsi..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm mb-1">Status</label>
+            <select className="w-full border p-2 rounded" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="all">Semua</option>
+              <option value="active">Aktif</option>
+              <option value="inactive">Nonaktif</option>
+            </select>
+          </div>
+        </div>
+        <div className="mt-3 text-sm text-gray-600">
+          Menampilkan {filteredFacilities.length} dari {facilities.length} data
+        </div>
+      </div>
+
       <table className="min-w-full bg-white shadow-md rounded">
         <thead className="bg-gray-50"><tr><th className="px-6 py-3 text-left">Nama</th><th className="px-6 py-3 text-left">Harga</th><th className="px-6 py-3 text-left">Tersedia</th><th className="px-6 py-3 text-left">Status</th><th className="px-6 py-3 text-left">Aksi</th></tr></thead>
         <tbody>
-          {facilities.map(f => (
+          {filteredFacilities.map(f => (
             <tr key={f.id} className="border-t">
               <td className="px-6 py-4">{f.nama}</td>
               <td className="px-6 py-4">{f.harga_mulai ? Number(f.harga_mulai).toLocaleString('id-ID') : '-'}</td>
@@ -140,6 +182,11 @@ export default function FacilitiesAdmin() {
               </td>
             </tr>
           ))}
+          {filteredFacilities.length === 0 && (
+            <tr>
+              <td colSpan="5" className="px-6 py-4 text-center text-gray-500">Tidak ada data yang sesuai filter</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
