@@ -16,83 +16,103 @@ model Admin {
   @@map("admins")
 }
 
-model Doctor {
-  id          Int        @id @default(autoincrement())
-  nama        String
-  spesialis   String
-  foto        String?
-  deskripsi   String?    @db.Text
-  created_at  DateTime   @default(now())
-  schedules   Schedule[]
-
-  @@map("doctors")
-}
-
-model Schedule {
-  id          Int    @id @default(autoincrement())
-  doctor_id   Int
-  hari        String
-  jam_mulai   String
-  jam_selesai String
-  doctor      Doctor @relation(fields: [doctor_id], references: [id], onDelete: Cascade)
-
-  @@map("schedules")
-}
-
-model News {
-  id      Int      @id @default(autoincrement())
-  judul   String
-  isi     String   @db.LongText
-  gambar  String?
-  tanggal DateTime @default(now())
-
-  @@map("news")
-}
-
-model Facility {
-  id        Int    @id @default(autoincrement())
-  nama      String
-  deskripsi String? @db.Text
-  gambar    String?
-
-  @@map("facilities")
-}
-
 model Achievement {
-  id        Int    @id @default(autoincrement())
-  judul     String
-  deskripsi String? @db.Text
-  tahun     Int?
-  gambar    String?
+  id         Int      @id @default(autoincrement())
+  judul      String   @db.VarChar(255)
+  deskripsi  String?  @db.Text
+  tahun      Int?
+  gambar     String?  @db.VarChar(255)
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  updated_at DateTime @default(now()) @db.Timestamp(0)
 
   @@map("achievements")
 }
 
-model Promotion {
-  id               Int      @id @default(autoincrement())
-  judul            String
-  deskripsi        String?  @db.Text
-  gambar           String?
-  tanggal_mulai    DateTime
-  tanggal_berakhir DateTime
+model dokter {
+  id_dokter       Int              @id @default(autoincrement())
+  nama_lengkap    String           @db.VarChar(150)
+  foto_url        String?          @db.VarChar(255)
+  deskripsi       String?          @db.Text
+  id_spesialis    Int?
+  id_subspesialis Int?
+  status_aktif    Boolean?         @default(true)
+  spesialis       spesialis?       @relation(fields: [id_spesialis], references: [id_spesialis], onDelete: Restrict, onUpdate: Restrict, map: "dokter_ibfk_1")
+  subspesialis    subspesialis?    @relation(fields: [id_subspesialis], references: [id_subspesialis], onDelete: Restrict, onUpdate: Restrict, map: "dokter_ibfk_2")
+  jadwal_praktek  jadwal_praktek[]
 
-  @@map("promotions")
+  @@index([id_spesialis], map: "id_spesialis")
+  @@index([id_subspesialis], map: "id_subspesialis")
 }
 
-model Contact {
-  id        Int    @id @default(autoincrement())
-  telepon   String?
-  email     String?
-  alamat    String? @db.Text
-  maps_link String? @db.Text
+model jadwal_praktek {
+  id_jadwal   Int                  @id @default(autoincrement())
+  id_dokter   Int?
+  hari        jadwal_praktek_hari?
+  jam_mulai   DateTime?            @db.Time(0)
+  jam_selesai DateTime?            @db.Time(0)
+  nama_poli   String?              @db.VarChar(100)
+  dokter      dokter?              @relation(fields: [id_dokter], references: [id_dokter], onDelete: Restrict, onUpdate: Restrict, map: "jadwal_praktek_ibfk_1")
 
-  @@map("contacts")
+  @@index([id_dokter], map: "id_dokter")
 }
 
-model Setting {
-  id           Int      @id @default(autoincrement())
-  linktree_url String?
-  updated_at   DateTime @updatedAt
+model kategori_layanan {
+  id_kategori   Int       @id @default(autoincrement())
+  nama_kategori String    @db.VarChar(100)
+  slug          String?   @unique(map: "slug") @db.VarChar(100)
+  icon_url      String?   @db.VarChar(255)
+  urutan        Int?      @default(0)
+  status_aktif  Boolean?  @default(true)
+  layanan       layanan[]
+}
 
-  @@map("settings")
+model layanan {
+  id_layanan        Int               @id @default(autoincrement())
+  id_kategori       Int?
+  nama_layanan      String            @db.VarChar(150)
+  slug              String?           @unique(map: "slug") @db.VarChar(150)
+  icon_url          String?           @db.VarChar(255)
+  gambar_banner     String?           @db.VarChar(255)
+  deskripsi_singkat String?           @db.VarChar(255)
+  deskripsi_lengkap String?           @db.Text
+  kontak_darurat    String?           @db.VarChar(50)
+  urutan            Int?              @default(0)
+  status_aktif      Boolean?          @default(true)
+  kategori_layanan  kategori_layanan? @relation(fields: [id_kategori], references: [id_kategori], onDelete: Restrict, onUpdate: Restrict, map: "layanan_ibfk_1")
+
+  @@index([id_kategori], map: "id_kategori")
+}
+
+model spesialis {
+  id_spesialis   Int      @id @default(autoincrement())
+  nama_spesialis String   @db.VarChar(100)
+  slug           String?  @unique(map: "slug") @db.VarChar(100)
+  dokter         dokter[]
+}
+
+model subspesialis {
+  id_subspesialis   Int      @id @default(autoincrement())
+  nama_subspesialis String   @db.VarChar(100)
+  slug              String?  @unique(map: "slug") @db.VarChar(100)
+  dokter            dokter[]
+}
+
+model tipe_kamar {
+  id_kamar        Int      @id @default(autoincrement())
+  nama_kamar      String   @db.VarChar(100)
+  gambar_url      String?  @db.VarChar(255)
+  fasilitas       String?  @db.Text
+  harga_mulai     Decimal? @db.Decimal(12, 2)
+  jumlah_tersedia Int?     @default(0)
+  status_aktif    Boolean? @default(true)
+}
+
+enum jadwal_praktek_hari {
+  Senin
+  Selasa
+  Rabu
+  Kamis
+  Jumat
+  Sabtu
+  Minggu
 }

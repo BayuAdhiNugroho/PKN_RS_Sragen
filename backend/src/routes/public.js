@@ -19,6 +19,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/doctors/specialties', doctorController.getSpecialties);
+router.get('/doctors/subspecialties', doctorController.getSubspecialties);
 router.get('/doctors/:id', doctorController.getById);
 router.get('/doctors', doctorController.getAll);
 router.get('/schedules', scheduleController.getAll);

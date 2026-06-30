@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 
+const emptyForm = { id: null, doctor_id: '', hari: 'Senin', jam_mulai: '', jam_selesai: '', nama_poli: '' };
+
 export default function ScheduleAdmin() {
   const [schedules, setSchedules] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  const [formData, setFormData] = useState({ id: null, doctor_id: '', hari: 'Senin', jam_mulai: '', jam_selesai: '' });
+  const [formData, setFormData] = useState(emptyForm);
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchData = async () => {
@@ -32,7 +34,7 @@ export default function ScheduleAdmin() {
       } else {
         await api.post('/admin/schedules', formData);
       }
-      setFormData({ id: null, doctor_id: '', hari: 'Senin', jam_mulai: '', jam_selesai: '' });
+      setFormData(emptyForm);
       setIsEditing(false);
       fetchData();
     } catch (err) {
@@ -41,7 +43,14 @@ export default function ScheduleAdmin() {
   };
 
   const handleEdit = (sched) => {
-    setFormData({ id: sched.id, doctor_id: sched.doctor_id, hari: sched.hari, jam_mulai: sched.jam_mulai, jam_selesai: sched.jam_selesai });
+    setFormData({
+      id: sched.id,
+      doctor_id: sched.doctor_id || '',
+      hari: sched.hari || 'Senin',
+      jam_mulai: sched.jam_mulai || '',
+      jam_selesai: sched.jam_selesai || '',
+      nama_poli: sched.nama_poli || '',
+    });
     setIsEditing(true);
   };
 
@@ -85,11 +94,15 @@ export default function ScheduleAdmin() {
               <label className="block text-sm font-medium mb-1">Jam Selesai</label>
               <input type="time" className="w-full border p-2 rounded" value={formData.jam_selesai} onChange={(e) => setFormData({...formData, jam_selesai: e.target.value})} required />
             </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">Nama Poli</label>
+              <input type="text" className="w-full border p-2 rounded" value={formData.nama_poli} onChange={(e) => setFormData({...formData, nama_poli: e.target.value})} placeholder="Contoh: Poli Anak" />
+            </div>
           </div>
           <div className="flex gap-2">
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
             {isEditing && (
-              <button type="button" onClick={() => { setIsEditing(false); setFormData({ id: null, doctor_id: '', hari: 'Senin', jam_mulai: '', jam_selesai: '' }); }} className="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+              <button type="button" onClick={() => { setIsEditing(false); setFormData(emptyForm); }} className="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
             )}
           </div>
         </form>
@@ -101,6 +114,7 @@ export default function ScheduleAdmin() {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dokter</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hari</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Poli</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jam</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
             </tr>
@@ -110,6 +124,7 @@ export default function ScheduleAdmin() {
               <tr key={sched.id}>
                 <td className="px-6 py-4">{sched.doctor?.nama || 'Unknown'}</td>
                 <td className="px-6 py-4">{sched.hari}</td>
+                <td className="px-6 py-4">{sched.nama_poli || '-'}</td>
                 <td className="px-6 py-4">{sched.jam_mulai} - {sched.jam_selesai}</td>
                 <td className="px-6 py-4 text-sm font-medium">
                   <button onClick={() => handleEdit(sched)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>

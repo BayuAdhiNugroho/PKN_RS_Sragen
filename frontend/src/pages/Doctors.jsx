@@ -96,6 +96,7 @@ export default function Doctors() {
             <div className="p-4">
               <div className="font-bold text-lg">{d.nama}</div>
               <div className="text-blue-600 text-sm font-medium mb-2">{d.spesialis}</div>
+              {d.subspesialis && <div className="text-teal-700 text-sm mb-2">{d.subspesialis}</div>}
               <div className="text-sm text-gray-600 line-clamp-2">{d.deskripsi || 'Tidak ada deskripsi'}</div>
               <button className="mt-3 w-full bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700 transition">
                 Lihat Detail
@@ -149,6 +150,11 @@ export default function Doctors() {
                     <span className="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-semibold text-lg">
                       {selectedDoctor.spesialis}
                     </span>
+                    {selectedDoctor.subspesialis && (
+                      <span className="inline-block bg-teal-100 text-teal-800 px-4 py-2 rounded-full font-semibold text-lg ml-2">
+                        {selectedDoctor.subspesialis}
+                      </span>
+                    )}
                   </div>
 
                   <h4 className="font-bold text-lg mb-2">Deskripsi</h4>
@@ -169,6 +175,9 @@ export default function Doctors() {
                         <div className="text-gray-700">
                           {schedule.jam_mulai} - {schedule.jam_selesai}
                         </div>
+                        {schedule.nama_poli && (
+                          <div className="text-sm text-gray-500 mt-1">{schedule.nama_poli}</div>
+                        )}
                       </div>
                     ))}
                   </div>

@@ -14,14 +14,40 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const normalizeDoctor = (doctor) => ({
+  ...doctor,
+  id: doctor?.id_dokter ?? doctor?.id,
+  nama: doctor?.nama_lengkap ?? doctor?.nama ?? doctor?.name ?? 'Dokter',
+  spesialis: doctor?.spesialis?.nama_spesialis ?? doctor?.spesialis ?? doctor?.specialty ?? '',
+  subspesialis: doctor?.subspesialis?.nama_subspesialis ?? doctor?.subspesialis ?? '',
+  foto: doctor?.foto_url ?? doctor?.foto ?? null,
+  deskripsi: doctor?.deskripsi ?? doctor?.description ?? null,
+  status_aktif: doctor?.status_aktif ?? true,
+  schedules: Array.isArray(doctor?.schedules ?? doctor?.jadwal_praktek)
+    ? (doctor?.schedules ?? doctor?.jadwal_praktek).map((schedule) => ({
+        id: schedule?.id_jadwal ?? schedule?.id,
+        hari: schedule?.hari ?? schedule?.day ?? '',
+        jam_mulai: schedule?.jam_mulai ?? '',
+        jam_selesai: schedule?.jam_selesai ?? '',
+        nama_poli: schedule?.nama_poli ?? schedule?.poliklinik ?? '',
+      }))
+    : [],
+})
+
+const normalizeDoctors = (payload) => {
+  if (Array.isArray(payload)) return payload.map(normalizeDoctor)
+  if (payload && Array.isArray(payload.data)) return payload.data.map(normalizeDoctor)
+  return []
+}
+
 export const getDoctors = async () => {
   const res = await api.get('/doctors')
-  return Array.isArray(res.data) ? res.data : []
+  return normalizeDoctors(res.data)
 }
 
 export const getDoctorById = async (id) => {
   const res = await api.get(`/doctors/${id}`)
-  return res.data
+  return normalizeDoctor(res.data)
 }
 
 export const getSpecialties = async () => {

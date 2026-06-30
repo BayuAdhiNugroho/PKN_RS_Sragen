@@ -1,25 +1,31 @@
-import { useState, useEffect, useRef } from 'react'; // Tambahkan useRef
-import { useLocation } from 'react-router-dom';      // Tambahkan useLocation
+import { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../../services/api';
+
+const emptyForm = {
+  id: null,
+  nama: '',
+  spesialis: '',
+  subspesialis: '',
+  deskripsi: '',
+  status_aktif: true,
+  foto: null,
+};
 
 export default function DoctorsAdmin() {
   const [doctors, setDoctors] = useState([]);
-  const [formData, setFormData] = useState({ id: null, nama: '', spesialis: '', deskripsi: '', foto: null });
+  const [specialties, setSpecialties] = useState([]);
+  const [subspecialties, setSubspecialties] = useState([]);
+  const [formData, setFormData] = useState(emptyForm);
   const [isEditing, setIsEditing] = useState(false);
 
-  // === TAMBAHKAN KODE DI BAWAH INI ===
   const location = useLocation();
   const formRef = useRef(null);
 
   useEffect(() => {
-    // Cek jika URL memiliki hash #tambah-dokter
     if (location.hash === '#tambah-dokter' && formRef.current) {
-      // Tunggu sebentar agar halaman selesai render
       setTimeout(() => {
-        // Scroll halus ke form
         formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // Beri efek highlight (border biru) selama 2 detik
         formRef.current.classList.add('ring-2', 'ring-blue-500', 'transition-all');
         setTimeout(() => {
           formRef.current.classList.remove('ring-2', 'ring-blue-500');
@@ -27,7 +33,6 @@ export default function DoctorsAdmin() {
       }, 100);
     }
   }, [location]);
-  // === SAMPAI SINI ===
 
   const fetchDoctors = async () => {
     try {
@@ -38,8 +43,22 @@ export default function DoctorsAdmin() {
     }
   };
 
+  const fetchSpecialties = async () => {
+    try {
+      const [specialtyRes, subspecialtyRes] = await Promise.all([
+        api.get('/doctors/specialties'),
+        api.get('/doctors/subspecialties'),
+      ]);
+      setSpecialties(Array.isArray(specialtyRes.data) ? specialtyRes.data : []);
+      setSubspecialties(Array.isArray(subspecialtyRes.data) ? subspecialtyRes.data : []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchDoctors();
+    fetchSpecialties();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -47,7 +66,9 @@ export default function DoctorsAdmin() {
     const data = new FormData();
     data.append('nama', formData.nama);
     data.append('spesialis', formData.spesialis);
+    data.append('subspesialis', formData.subspesialis);
     data.append('deskripsi', formData.deskripsi);
+    data.append('status_aktif', formData.status_aktif ? 'true' : 'false');
     if (formData.foto) {
       data.append('foto', formData.foto);
     }
@@ -62,17 +83,27 @@ export default function DoctorsAdmin() {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       }
-      setFormData({ id: null, nama: '', spesialis: '', deskripsi: '', foto: null });
+      setFormData(emptyForm);
       setIsEditing(false);
       fetchDoctors();
+      fetchSpecialties();
     } catch (err) {
       alert('Gagal menyimpan data dokter');
     }
   };
 
   const handleEdit = (doc) => {
-    setFormData({ id: doc.id, nama: doc.nama, spesialis: doc.spesialis, deskripsi: doc.deskripsi || '', foto: null });
+    setFormData({
+      id: doc.id,
+      nama: doc.nama || '',
+      spesialis: doc.spesialis || '',
+      subspesialis: doc.subspesialis || '',
+      deskripsi: doc.deskripsi || '',
+      status_aktif: doc.status_aktif ?? true,
+      foto: null,
+    });
     setIsEditing(true);
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const handleDelete = async (id) => {
@@ -90,18 +121,38 @@ export default function DoctorsAdmin() {
     <div>
       <h1 className="text-3xl font-bold mb-6">Kelola Dokter</h1>
       
-      {/* TAMBAHKAN ref={formRef} DI SINI */}
       <div ref={formRef} className="bg-white p-6 rounded shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">{isEditing ? 'Edit Dokter' : 'Tambah Dokter'}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Nama</label>
               <input type="text" className="w-full border p-2 rounded" value={formData.nama} onChange={(e) => setFormData({...formData, nama: e.target.value})} required />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Spesialis</label>
-              <input type="text" className="w-full border p-2 rounded" value={formData.spesialis} onChange={(e) => setFormData({...formData, spesialis: e.target.value})} required />
+              <input list="spesialis-options" type="text" className="w-full border p-2 rounded" value={formData.spesialis} onChange={(e) => setFormData({...formData, spesialis: e.target.value})} required placeholder="Contoh: Anak" />
+              <datalist id="spesialis-options">
+                {specialties.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Subspesialis</label>
+              <input list="subspesialis-options" type="text" className="w-full border p-2 rounded" value={formData.subspesialis} onChange={(e) => setFormData({...formData, subspesialis: e.target.value})} placeholder="Opsional" />
+              <datalist id="subspesialis-options">
+                {subspecialties.map((item) => (
+                  <option key={item} value={item} />
+                ))}
+              </datalist>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Status</label>
+              <select className="w-full border p-2 rounded" value={formData.status_aktif ? 'true' : 'false'} onChange={(e) => setFormData({...formData, status_aktif: e.target.value === 'true'})}>
+                <option value="true">Aktif</option>
+                <option value="false">Nonaktif</option>
+              </select>
             </div>
           </div>
           <div>
@@ -115,7 +166,7 @@ export default function DoctorsAdmin() {
           <div className="flex gap-2">
             <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan</button>
             {isEditing && (
-              <button type="button" onClick={() => { setIsEditing(false); setFormData({ id: null, nama: '', spesialis: '', deskripsi: '', foto: null }); }} className="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+              <button type="button" onClick={() => { setIsEditing(false); setFormData(emptyForm); }} className="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
             )}
           </div>
         </form>
@@ -127,6 +178,8 @@ export default function DoctorsAdmin() {
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spesialis</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subspesialis</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
             </tr>
           </thead>
@@ -135,6 +188,8 @@ export default function DoctorsAdmin() {
               <tr key={doc.id}>
                 <td className="px-6 py-4 whitespace-nowrap">{doc.nama}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{doc.spesialis}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{doc.subspesialis || '-'}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{doc.status_aktif ? 'Aktif' : 'Nonaktif'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button onClick={() => handleEdit(doc)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</button>
                   <button onClick={() => handleDelete(doc.id)} className="text-red-600 hover:text-red-900">Hapus</button>
@@ -142,7 +197,7 @@ export default function DoctorsAdmin() {
               </tr>
             ))}
             {doctors.length === 0 && (
-              <tr><td colSpan="3" className="px-6 py-4 text-center text-gray-500">Belum ada data dokter</td></tr>
+              <tr><td colSpan="5" className="px-6 py-4 text-center text-gray-500">Belum ada data dokter</td></tr>
             )}
           </tbody>
         </table>

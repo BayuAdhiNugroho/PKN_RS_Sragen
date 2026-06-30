@@ -15,6 +15,7 @@ export default function Schedule(){
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dokter</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spesialis</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hari</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poli</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jam</th>
               </tr>
             </thead>
@@ -24,6 +25,7 @@ export default function Schedule(){
                   <td className="px-6 py-4 whitespace-nowrap font-medium">{s.doctor?.nama || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{s.doctor?.spesialis || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{s.hari}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{s.nama_poli || '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{s.jam_mulai} - {s.jam_selesai}</td>
                 </tr>
               ))}
