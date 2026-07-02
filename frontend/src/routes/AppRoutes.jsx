@@ -12,6 +12,8 @@ import News from '../pages/News'
 import Promotions from '../pages/Promotions'
 import Contact from '../pages/Contact'
 import Achievements from '../pages/Achievements'
+import ServiceDetail from '../pages/ServiceDetail'
+import DoctorProfile from '../pages/DoctorProfile'
 
 // Admin Pages
 import Login from '../pages/Login'
@@ -35,6 +37,8 @@ export default function AppRoutes() {
         <Route path="promotions" element={<Promotions />} />
         <Route path="contact" element={<Contact />} />
         <Route path="achievements" element={<Achievements />} />
+        <Route path="service/:id" element={<ServiceDetail />} />
+        <Route path="doctor/:id" element={<DoctorProfile />} />
       </Route>
 
       <Route path="/login" element={<Login />} />

@@ -1,25 +1,56 @@
 import { useEffect, useState } from 'react'
 import { getNews, IMAGE_URL } from '../services/api'
+import { IoNewspaperOutline } from 'react-icons/io5'
 
-export default function News(){
+export default function News() {
   const [news, setNews] = useState([])
-  useEffect(()=>{ getNews().then(setNews).catch(()=>{}) }, [])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getNews().then(data => {
+      setNews(data)
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
+
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Berita Terkini</h1>
-      <div className="space-y-6">
-        {news.length ? news.map(n=> (
-          <article key={n.id} className="border rounded-lg p-6 shadow hover:shadow-md transition flex flex-col md:flex-row gap-6">
-            {n.gambar && (
-              <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="w-full md:w-48 h-48 md:h-32 object-cover rounded" />
-            )}
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-2">{n.judul}</h2>
-              <div className="text-sm text-gray-500 mb-4">{new Date(n.tanggal).toLocaleDateString()}</div>
-              <p className="text-gray-700">{n.isi}</p>
+    <div>
+      <div className="page-banner">
+        <h1>Berita Terkini</h1>
+        <p>Informasi terbaru seputar kegiatan dan layanan RSU PKU Muhammadiyah Sragen</p>
+      </div>
+
+      <div className="section">
+        <div className="container">
+          {loading ? (
+            <div className="loading-spinner"><div className="spinner" /></div>
+          ) : news.length > 0 ? (
+            <div className="cards-grid cards-grid-3">
+              {news.map(n => (
+                <article key={n.id} className="card">
+                  {n.gambar ? (
+                    <img src={`${IMAGE_URL}${n.gambar}`} alt={n.judul} className="card-img" />
+                  ) : (
+                    <div className="card-img-placeholder"><IoNewspaperOutline /></div>
+                  )}
+                  <div className="card-body">
+                    <div className="card-date">
+                      {new Date(n.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </div>
+                    <h3>{n.judul}</h3>
+                    <p style={{ fontSize: '0.88rem', lineHeight: 1.7 }}>{n.isi}</p>
+                  </div>
+                </article>
+              ))}
             </div>
-          </article>
-        )) : <div className="text-center text-gray-500">Tidak ada berita.</div>}
+          ) : (
+            <div className="empty-state">
+              <IoNewspaperOutline size={48} />
+              <p>Belum ada berita tersedia</p>
+              <span>Nantikan informasi terbaru dari kami</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

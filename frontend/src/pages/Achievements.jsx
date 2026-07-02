@@ -1,25 +1,54 @@
 import { useEffect, useState } from 'react'
 import { getAchievements, IMAGE_URL } from '../services/api'
+import { IoTrophyOutline } from 'react-icons/io5'
 
-export default function Achievements(){
+export default function Achievements() {
   const [items, setItems] = useState([])
-  useEffect(()=>{ getAchievements().then(setItems).catch(()=>{}) }, [])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getAchievements().then(data => {
+      setItems(data)
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
+
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Prestasi Rumah Sakit</h1>
-      <div className="space-y-6">
-        {items.length ? items.map(i=> (
-          <article key={i.id} className="border rounded-lg p-6 shadow hover:shadow-md transition flex flex-col md:flex-row gap-6">
-            {i.gambar && (
-              <img src={`${IMAGE_URL}${i.gambar}`} alt={i.judul} className="w-full md:w-32 h-32 object-cover rounded" />
-            )}
-            <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">{i.judul}</h2>
-              <div className="text-blue-600 font-semibold mb-2">{i.tahun}</div>
-              <p className="text-gray-700">{i.deskripsi}</p>
+    <div>
+      <div className="page-banner">
+        <h1>Prestasi Rumah Sakit</h1>
+        <p>Pencapaian dan penghargaan yang telah diraih RSU PKU Muhammadiyah Sragen</p>
+      </div>
+
+      <div className="section">
+        <div className="container">
+          {loading ? (
+            <div className="loading-spinner"><div className="spinner" /></div>
+          ) : items.length > 0 ? (
+            <div className="cards-grid cards-grid-3">
+              {items.map(i => (
+                <article key={i.id} className="card">
+                  {i.gambar ? (
+                    <img src={`${IMAGE_URL}${i.gambar}`} alt={i.judul} className="card-img" />
+                  ) : (
+                    <div className="card-img-placeholder"><IoTrophyOutline /></div>
+                  )}
+                  <div className="card-body">
+                    {i.tahun && <span className="card-tag">{i.tahun}</span>}
+                    <h3>{i.judul}</h3>
+                    <p style={{ fontSize: '0.88rem' }}>{i.deskripsi}</p>
+                  </div>
+                </article>
+              ))}
             </div>
-          </article>
-        )) : <div className="text-center text-gray-500">Tidak ada prestasi.</div>}
+          ) : (
+            <div className="empty-state">
+              <IoTrophyOutline size={48} />
+              <p>Belum ada data prestasi</p>
+              <span>Nantikan informasi pencapaian terbaru kami</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

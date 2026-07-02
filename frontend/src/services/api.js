@@ -55,6 +55,11 @@ export const getSpecialties = async () => {
   return Array.isArray(res.data) ? res.data : []
 }
 
+export const getSubspecialties = async () => {
+  const res = await api.get('/doctors/subspecialties')
+  return Array.isArray(res.data) ? res.data : []
+}
+
 export const getNews = async () => {
   const res = await api.get('/news')
   return Array.isArray(res.data) ? res.data : []

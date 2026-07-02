@@ -1,51 +1,90 @@
 import { useEffect, useState } from 'react'
 import api from '../services/api'
+import { IoLocationOutline, IoCallOutline, IoMailOutline, IoTimeOutline } from 'react-icons/io5'
 
-export default function Contact(){
+export default function Contact() {
   const [contact, setContact] = useState(null)
-  
-  useEffect(()=>{ 
-    api.get('/contact').then(res => setContact(res.data)).catch(()=>{}) 
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    api.get('/contact').then(res => {
+      setContact(res.data)
+      setLoading(false)
+    }).catch(() => setLoading(false))
   }, [])
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8">Hubungi Kami</h1>
-      
-      {contact ? (
-        <div className="bg-white p-8 rounded-lg shadow-md border-t-4 border-blue-600 space-y-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Alamat</h2>
-            <p className="text-gray-700">{contact.alamat || 'Belum ada data alamat'}</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Telepon</h2>
-              <p className="text-gray-700">{contact.telepon || '-'}</p>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold mb-2">Email</h2>
-              <p className="text-gray-700">{contact.email || '-'}</p>
-            </div>
-          </div>
-          {contact.maps_link && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Lokasi Kami</h2>
-              <div className="w-full h-64 bg-gray-200 rounded overflow-hidden">
-                <iframe 
-                  src={contact.maps_link} 
-                  width="100%" 
-                  height="100%" 
-                  style={{border:0}} 
-                  allowFullScreen="" 
-                  loading="lazy" 
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+    <div>
+      <div className="page-banner">
+        <h1>Hubungi Kami</h1>
+        <p>Kami siap melayani Anda. Jangan ragu untuk menghubungi kami.</p>
+      </div>
+
+      <div className="section">
+        <div className="container">
+          {loading ? (
+            <div className="loading-spinner"><div className="spinner" /></div>
+          ) : (
+            <div className="contact-grid">
+              <div className="contact-info-card">
+                <h3 style={{ marginBottom: 24, fontSize: '1.2rem' }}>Informasi Kontak</h3>
+
+                <div className="contact-info-item">
+                  <div className="contact-info-icon"><IoLocationOutline /></div>
+                  <div className="contact-info-text">
+                    <h4>Alamat</h4>
+                    <p>{contact?.alamat || 'Jl. Raya Sukowati No. 534, Sragen, Jawa Tengah'}</p>
+                  </div>
+                </div>
+
+                <div className="contact-info-item">
+                  <div className="contact-info-icon"><IoCallOutline /></div>
+                  <div className="contact-info-text">
+                    <h4>Telepon</h4>
+                    <p>{contact?.telepon || '(0271) 123-4567'}</p>
+                  </div>
+                </div>
+
+                <div className="contact-info-item">
+                  <div className="contact-info-icon"><IoMailOutline /></div>
+                  <div className="contact-info-text">
+                    <h4>Email</h4>
+                    <p>{contact?.email || 'info@rsupkusragen.id'}</p>
+                  </div>
+                </div>
+
+                <div className="contact-info-item">
+                  <div className="contact-info-icon"><IoTimeOutline /></div>
+                  <div className="contact-info-text">
+                    <h4>Jam Operasional</h4>
+                    <p>UGD: 24 Jam<br />Poliklinik: Senin - Sabtu, 07.00 - 21.00</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="contact-map">
+                {contact?.maps_link ? (
+                  <iframe
+                    src={contact.maps_link}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Lokasi RSU PKU Muhammadiyah Sragen"
+                  />
+                ) : (
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.5!2d111.02!3d-7.43!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zN8KwMjUnNDguMCJTIDExMcKwMDEnMTIuMCJF!5e0!3m2!1sid!2sid!4v1"
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Lokasi RSU PKU Muhammadiyah Sragen"
+                  />
+                )}
               </div>
             </div>
           )}
         </div>
-      ) : <div className="text-center text-gray-500">Memuat informasi kontak...</div>}
+      </div>
     </div>
   )
 }

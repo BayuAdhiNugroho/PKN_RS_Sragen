@@ -156,8 +156,8 @@ export default function DoctorsAdmin() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Deskripsi</label>
-            <textarea className="w-full border p-2 rounded" value={formData.deskripsi} onChange={(e) => setFormData({...formData, deskripsi: e.target.value})} />
+            <label className="block text-sm font-medium mb-1">Profil / Biografi (Detail Lengkap)</label>
+            <textarea rows="8" className="w-full border p-2 rounded" value={formData.deskripsi} onChange={(e) => setFormData({...formData, deskripsi: e.target.value})} placeholder="Masukkan profil lengkap, riwayat pendidikan, pengalaman, dll..." />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Foto (Opsional)</label>
